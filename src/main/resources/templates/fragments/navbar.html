@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<nav th:fragment="navbar" class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+    <div class="container">
+        <a class="navbar-brand fw-bold" th:href="@{/}">💳 SprintLend</a>
+        <div class="d-flex align-items-center gap-2">
+            <a class="btn btn-outline-light btn-sm" th:href="@{/swagger-ui.html}" target="_blank">Swagger API</a>
+            <span id="navUser" class="text-light small me-2"></span>
+            <button id="logoutBtn" class="btn btn-danger btn-sm d-none" onclick="logout()">Logout</button>
+        </div>
+    </div>
+    <script>
+        (function() {
+            const name = localStorage.getItem('fullName');
+            const role = localStorage.getItem('role');
+            if (localStorage.getItem('token')) {
+                document.getElementById('navUser').innerText = `${name} (${role})`;
+                document.getElementById('logoutBtn').classList.remove('d-none');
+            }
+        })();
+        function logout() {
+            localStorage.clear();
+            window.location.href = '/login';
+        }
+    </script>
+</nav>
+</body>
+</html>

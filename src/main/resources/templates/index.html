@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${appName}">SprintLend</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<div class="container py-5 text-center">
+    <div class="p-5 bg-white rounded-4 shadow-sm mx-auto" style="max-width: 720px;">
+        <span class="badge bg-primary mb-3">Digital Lending & Loan Management</span>
+        <h1 class="fw-bold mb-3" th:text="${appName}">SprintLend</h1>
+        <p class="text-muted mb-4">
+            Apply for instant personal loans at 12% p.a., get automated EMI schedules upon approval, and track repayments online.
+        </p>
+        <div class="d-flex justify-content-center gap-3 flex-wrap">
+            <a th:href="@{/login}" class="btn btn-primary btn-lg px-4">Login</a>
+            <a th:href="@{/register}" class="btn btn-outline-primary btn-lg px-4">Register as Borrower</a>
+            <a th:href="@{/swagger-ui.html}" class="btn btn-outline-dark btn-lg px-4" target="_blank">Open Swagger UI</a>
+        </div>
+        <hr class="my-4">
+        <div class="text-start small text-muted bg-light p-3 rounded">
+            <strong>Demo Credentials (Seeded Automatically):</strong><br>
+            • Admin: <code>admin@lending.com</code> / <code>admin123</code><br>
+            • Borrower: <code>rahul@demo.com</code> / <code>borrower123</code>
+        </div>
+    </div>
+</div>
+</body>
+</html>
