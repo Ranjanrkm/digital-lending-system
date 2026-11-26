@@ -1,5 +1,6 @@
 package com.sprint.lending.controller;
 
+import com.sprint.lending.dto.BorrowerProfileResponse;
 import com.sprint.lending.dto.LoanApplyRequest;
 import com.sprint.lending.dto.LoanResponse;
 import com.sprint.lending.dto.RepaymentResponse;
@@ -23,6 +24,11 @@ public class LoanController {
     public LoanController(LoanService loanService, RepaymentService repaymentService) {
         this.loanService = loanService;
         this.repaymentService = repaymentService;
+    }
+
+    @GetMapping("/loans/profile")
+    public ResponseEntity<BorrowerProfileResponse> getProfile(Authentication auth) {
+        return ResponseEntity.ok(loanService.getMyProfile(auth.getName()));
     }
 
     @PostMapping("/loans")

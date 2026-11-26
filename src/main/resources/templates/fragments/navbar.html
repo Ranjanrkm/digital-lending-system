@@ -1,24 +1,56 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
-<nav th:fragment="navbar" class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+<nav th:fragment="navbar" class="navbar navbar-expand-lg navbar-dark bank-navbar sticky-top no-print">
     <div class="container">
-        <a class="navbar-brand fw-bold" th:href="@{/}">💳 SprintLend</a>
+        <a class="navbar-brand d-flex align-items-center gap-2 fw-bold text-white" th:href="@{/}">
+            <span class="brand-mark"><i class="bi bi-bank2"></i></span>
+            <span>SprintLend <span style="color:#34D399; font-weight:600;">Capital</span></span>
+        </a>
+
         <div class="d-flex align-items-center gap-2">
-            <a class="btn btn-outline-light btn-sm" th:href="@{/swagger-ui.html}" target="_blank">Swagger API</a>
-            <span id="navUser" class="text-light small me-2"></span>
-            <button id="logoutBtn" class="btn btn-danger btn-sm d-none" onclick="logout()">Logout</button>
+            <a id="navLoginBtn" class="btn btn-outline-light btn-sm px-3 rounded-pill" th:href="@{/login}">
+                <i class="bi bi-box-arrow-in-right me-1"></i>Sign In
+            </a>
+            <a id="navRegisterBtn" class="btn btn-emerald btn-sm px-3 rounded-pill" th:href="@{/register}">
+                Open Account
+            </a>
+
+            <a id="navDashboardBtn" class="btn btn-outline-light btn-sm px-3 rounded-pill d-none" href="#">
+                <i class="bi bi-speedometer2 me-1"></i>My Console
+            </a>
+            <div id="navUserBadge" class="d-none align-items-center gap-2 bg-white bg-opacity-10 px-3 py-1 rounded-pill text-white small">
+                <i class="bi bi-person-circle text-success"></i>
+                <span id="navUserName" class="fw-semibold"></span>
+                <span id="navUserRole" class="badge bg-success bg-opacity-75" style="font-size:0.65rem;"></span>
+            </div>
+            <button id="logoutBtn" class="btn btn-sm btn-danger rounded-pill px-3 d-none" onclick="logout()">
+                <i class="bi bi-power me-1"></i>Sign Out
+            </button>
         </div>
     </div>
+
     <script>
-        (function() {
+        (function () {
+            const token = localStorage.getItem('token');
             const name = localStorage.getItem('fullName');
             const role = localStorage.getItem('role');
-            if (localStorage.getItem('token')) {
-                document.getElementById('navUser').innerText = `${name} (${role})`;
+            if (token && role) {
+                document.getElementById('navLoginBtn').classList.add('d-none');
+                document.getElementById('navRegisterBtn').classList.add('d-none');
+                const dashBtn = document.getElementById('navDashboardBtn');
+                dashBtn.href = role === 'ADMIN' ? '/admin/dashboard' : '/borrower/dashboard';
+                dashBtn.classList.remove('d-none');
+
+                const badge = document.getElementById('navUserBadge');
+                badge.classList.remove('d-none');
+                badge.classList.add('d-flex');
+                document.getElementById('navUserName').innerText = name || 'User';
+                document.getElementById('navUserRole').innerText = role;
                 document.getElementById('logoutBtn').classList.remove('d-none');
             }
         })();
+
         function logout() {
             localStorage.clear();
             window.location.href = '/login';

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="headAssets(pageTitle)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${pageTitle}">SprintLend Capital</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.9/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.13.2/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --bank-navy: #0B192C;
+            --bank-navy-soft: #142847;
+            --bank-emerald: #059669;
+            --bank-emerald-hover: #047857;
+            --bank-gold: #D97706;
+            --bank-bg: #F3F6FA;
+            --bank-border: #E2E8F0;
+            --bank-text: #0F172A;
+            --bank-muted: #64748B;
+        }
+        * { font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif; }
+        body { background-color: var(--bank-bg); color: var(--bank-text); }
+        .bank-navbar {
+            background: linear-gradient(90deg, #071222 0%, #0F2342 100%);
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            padding: 0.85rem 0;
+        }
+        .brand-mark {
+            width: 36px; height: 36px; border-radius: 10px;
+            background: linear-gradient(135deg, #10B981, #059669);
+            display: inline-flex; align-items: center; justify-content: center;
+            color: #fff; font-weight: 800; font-size: 1.1rem;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
+        }
+        .hero-gradient {
+            background: radial-gradient(circle at 85% 20%, rgba(16,185,129,0.22), transparent 45%),
+            linear-gradient(135deg, #071222 0%, #102542 55%, #16335B 100%);
+            color: #fff;
+        }
+        .bank-card {
+            background: #fff;
+            border: 1px solid var(--bank-border);
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
+        }
+        .kpi-card {
+            background: #fff;
+            border: 1px solid var(--bank-border);
+            border-radius: 16px;
+            padding: 1.25rem;
+            transition: transform 0.18s ease, box-shadow 0.18s ease;
+        }
+        .kpi-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(15, 23, 42, 0.07);
+        }
+        .kpi-icon {
+            width: 44px; height: 44px; border-radius: 12px;
+            display: inline-flex; align-items: center; justify-content: center;
+            font-size: 1.25rem;
+        }
+        .btn-emerald {
+            background: var(--bank-emerald); border-color: var(--bank-emerald); color: #fff; font-weight: 600;
+        }
+        .btn-emerald:hover {
+            background: var(--bank-emerald-hover); border-color: var(--bank-emerald-hover); color: #fff;
+        }
+        .btn-navy {
+            background: var(--bank-navy); border-color: var(--bank-navy); color: #fff; font-weight: 600;
+        }
+        .btn-navy:hover {
+            background: var(--bank-navy-soft); border-color: var(--bank-navy-soft); color: #fff;
+        }
+        .status-pill {
+            padding: 0.35rem 0.75rem; border-radius: 999px;
+            font-size: 0.75rem; font-weight: 700; letter-spacing: 0.03em; display: inline-flex; align-items: center; gap: 5px;
+        }
+        .pill-APPLIED { background: #FEF3C7; color: #92400E; }
+        .pill-APPROVED { background: #D1FAE5; color: #065F46; }
+        .pill-REJECTED { background: #FEE2E2; color: #991B1B; }
+        .pill-CLOSED { background: #E2E8F0; color: #334155; }
+        .pill-PAID { background: #D1FAE5; color: #065F46; }
+        .pill-PENDING { background: #FEF3C7; color: #92400E; }
+        .form-range::-webkit-slider-thumb { background: var(--bank-emerald); }
+        .table thead th {
+            font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;
+            color: var(--bank-muted); font-weight: 700; border-bottom-width: 1px;
+        }
+        .auth-split-left {
+            background: radial-gradient(circle at 20% 80%, rgba(16,185,129,0.25), transparent 50%),
+            linear-gradient(155deg, #071222 0%, #112746 100%);
+            color: #fff;
+        }
+        @media print {
+            .no-print { display: none !important; }
+            body { background: #fff !important; }
+            .bank-card { border: none !important; box-shadow: none !important; }
+        }
+    </style>
+</head>
+</html>

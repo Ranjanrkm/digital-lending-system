@@ -1,5 +1,6 @@
 package com.sprint.lending.service;
 
+import com.sprint.lending.dto.BorrowerProfileResponse;
 import com.sprint.lending.dto.LoanApplyRequest;
 import com.sprint.lending.dto.LoanResponse;
 import com.sprint.lending.entity.BorrowerProfile;
@@ -18,7 +19,7 @@ import java.util.List;
 @Service
 public class LoanService {
 
-    private static final double DEFAULT_ANNUAL_INTEREST_RATE = 12.0; // 12% p.a.
+    private static final double DEFAULT_ANNUAL_INTEREST_RATE = 12.0;
 
     private final LoanRepository loanRepository;
     private final BorrowerProfileRepository profileRepository;
@@ -35,12 +36,17 @@ public class LoanService {
         this.repaymentService = repaymentService;
     }
 
+    public BorrowerProfileResponse getMyProfile(String borrowerEmail) {
+        BorrowerProfile borrower = profileRepository.findByUserEmail(borrowerEmail)
+                .orElseThrow(() -> new LoanNotFoundException("Borrower profile not found"));
+        return BorrowerProfileResponse.fromEntity(borrower);
+    }
+
     @Transactional
     public LoanResponse applyForLoan(LoanApplyRequest request, String borrowerEmail) {
         BorrowerProfile borrower = profileRepository.findByUserEmail(borrowerEmail)
                 .orElseThrow(() -> new LoanNotFoundException("Borrower profile not found"));
 
-        // Business Rule 1: Block duplicate active applications (APPLIED or APPROVED)
         boolean hasActiveLoan = loanRepository.existsByBorrowerIdAndStatusIn(
                 borrower.getId(), List.of(LoanStatus.APPLIED, LoanStatus.APPROVED)
         );
@@ -49,11 +55,9 @@ public class LoanService {
                     "You already have an active or pending loan application. Close it before applying again.");
         }
 
-        // Calculate EMI
         BigDecimal emi = emiCalculator.calculateEmi(
                 request.getAmount(), DEFAULT_ANNUAL_INTEREST_RATE, request.getTenureMonths());
 
-        // Business Rule 2: EMI must not exceed 50% of monthly income
         BigDecimal maxAffordableEmi = borrower.getMonthlyIncome().multiply(BigDecimal.valueOf(0.50));
         if (emi.compareTo(maxAffordableEmi) > 0) {
             throw new InvalidLoanStateException(
@@ -83,7 +87,6 @@ public class LoanService {
                 .toList();
     }
 
-    // Admin: Filter all loans by status using Java Streams
     public List<LoanResponse> getAllLoansForAdmin(String status) {
         List<Loan> allLoans = loanRepository.findAll();
 
@@ -105,12 +108,10 @@ public class LoanService {
         }
 
         loan.setStatus(LoanStatus.APPROVED);
-        loan.setAdminRemark((remark == null || remark.isBlank()) ? "Approved by Admin" : remark.trim());
+        loan.setAdminRemark((remark == null || remark.isBlank()) ? "Approved by Credit Officer" : remark.trim());
         Loan saved = loanRepository.save(loan);
 
-        // Generate EMI schedule immediately upon approval
         repaymentService.generateSchedule(saved);
-
         return LoanResponse.fromEntity(saved);
     }
 
@@ -124,7 +125,7 @@ public class LoanService {
         }
 
         loan.setStatus(LoanStatus.REJECTED);
-        loan.setAdminRemark((remark == null || remark.isBlank()) ? "Rejected by Admin" : remark.trim());
+        loan.setAdminRemark((remark == null || remark.isBlank()) ? "Rejected after underwriting review" : remark.trim());
         return LoanResponse.fromEntity(loanRepository.save(loan));
     }
 }

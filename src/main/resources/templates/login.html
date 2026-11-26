@@ -1,36 +1,128 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Login - SprintLend</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body class="bg-light">
+<head th:replace="~{fragments/styles :: headAssets('Sign In — SprintLend Capital')}"></head>
+<body>
 <div th:replace="~{fragments/navbar :: navbar}"></div>
 
 <div class="container py-5">
-    <div class="card shadow-sm mx-auto p-4" style="max-width: 440px;">
-        <h3 class="mb-3 text-center">Sign In</h3>
-        <div id="alertBox" class="alert alert-danger d-none"></div>
-        <form id="loginForm">
-            <div class="mb-3">
-                <label class="form-label">Email</label>
-                <input type="email" id="email" class="form-control" required placeholder="rahul@demo.com">
+    <div class="bank-card overflow-hidden mx-auto" style="max-width: 960px;">
+        <div class="row g-0">
+            <!-- Left Executive Panel -->
+            <div class="col-lg-5 auth-split-left p-5 d-flex flex-column justify-content-between">
+                <div>
+                    <span class="badge bg-success bg-opacity-25 text-white px-3 py-2 rounded-pill mb-4">
+                        <i class="bi bi-lock-fill me-1"></i> Encrypted Banking Access
+                    </span>
+                    <h3 class="fw-bold mb-3">Welcome to SprintLend Capital</h3>
+                    <p class="text-white-50 small">
+                        Sign in securely to access your personal loan portfolio, EMI repayment tracker, or the Credit Officer Underwriting Desk.
+                    </p>
+                </div>
+                <div class="pt-4 border-top border-white border-opacity-10 small text-white-50">
+                    <div class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>256-bit JWT Stateless Auth</div>
+                    <div class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Role-Segregated Portals</div>
+                    <div><i class="bi bi-check-circle-fill text-success me-2"></i>Real-Time MySQL Ledger</div>
+                </div>
             </div>
-            <div class="mb-3">
-                <label class="form-label">Password</label>
-                <input type="password" id="password" class="form-control" required placeholder="••••••••">
+
+            <!-- Right Form Panel -->
+            <div class="col-lg-7 p-4 p-md-5 bg-white">
+                <h4 class="fw-bold mb-1">Portal Sign In</h4>
+                <p class="text-muted small mb-4">Select your role workspace and enter your credentials</p>
+
+                <!-- Portal Mode Selector -->
+                <div class="btn-group w-100 mb-4 p-1 rounded-3" style="background:#F1F5F9;" role="group">
+                    <button type="button" id="tabBorrower" class="btn btn-sm fw-semibold rounded-2 bg-white shadow-sm text-dark" onclick="switchPortal('borrower')">
+                        <i class="bi bi-person-badge me-1 text-success"></i>Borrower Portal
+                    </button>
+                    <button type="button" id="tabAdmin" class="btn btn-sm fw-semibold rounded-2 text-muted" onclick="switchPortal('admin')">
+                        <i class="bi bi-building-lock me-1 text-primary"></i>Admin Credit Desk
+                    </button>
+                </div>
+
+                <div id="alertBox" class="alert alert-danger py-2 small d-none"></div>
+
+                <form id="loginForm">
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Corporate / Registered Email</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light"><i class="bi bi-envelope text-muted"></i></span>
+                            <input type="email" id="email" class="form-control" required placeholder="name@domain.com">
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label small fw-semibold">Password</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light"><i class="bi bi-key text-muted"></i></span>
+                            <input type="password" id="password" class="form-control" required placeholder="Enter your password">
+                        </div>
+                    </div>
+                    <button type="submit" id="loginSubmitBtn" class="btn btn-emerald w-100 py-2 rounded-3">
+                        Sign In to Borrower Portal <i class="bi bi-arrow-right ms-1"></i>
+                    </button>
+                </form>
+
+                <div class="d-flex justify-content-between align-items-center mt-4 pt-3 border-top small">
+                    <span class="text-muted">New borrower? <a th:href="@{/register}" class="fw-semibold text-success text-decoration-none">Open Account</a></span>
+                    <button type="button" class="btn btn-link btn-sm text-muted text-decoration-none p-0" onclick="toggleDemoBox()">
+                        <i class="bi bi-info-circle me-1"></i>Evaluator Access
+                    </button>
+                </div>
+
+                <!-- Hidden by default — only opens if clicked during a presentation -->
+                <div id="demoBox" class="mt-3 p-3 rounded-3 bg-light border small d-none">
+                    <div class="fw-bold mb-2">Quick-Fill Sandbox Accounts</div>
+                    <div class="d-flex gap-2 flex-wrap">
+                        <button type="button" class="btn btn-outline-success btn-sm" onclick="fillDemo('rahul@demo.com','borrower123','borrower')">
+                            Fill Borrower (Rahul)
+                        </button>
+                        <button type="button" class="btn btn-outline-primary btn-sm" onclick="fillDemo('admin@lending.com','admin123','admin')">
+                            Fill Credit Admin
+                        </button>
+                    </div>
+                </div>
             </div>
-            <button type="submit" class="btn btn-primary w-100">Login</button>
-        </form>
-        <p class="text-center mt-3 mb-0 small">
-            New borrower? <a th:href="@{/register}">Create an account</a>
-        </p>
+        </div>
     </div>
 </div>
 
 <script>
+    let activePortal = 'borrower';
+
+    function switchPortal(portal) {
+        activePortal = portal;
+        const bBtn = document.getElementById('tabBorrower');
+        const aBtn = document.getElementById('tabAdmin');
+        const submit = document.getElementById('loginSubmitBtn');
+
+        if (portal === 'admin') {
+            aBtn.className = 'btn btn-sm fw-semibold rounded-2 bg-white shadow-sm text-dark';
+            bBtn.className = 'btn btn-sm fw-semibold rounded-2 text-muted';
+            submit.className = 'btn btn-navy w-100 py-2 rounded-3';
+            submit.innerHTML = 'Sign In to Admin Credit Desk <i class="bi bi-arrow-right ms-1"></i>';
+        } else {
+            bBtn.className = 'btn btn-sm fw-semibold rounded-2 bg-white shadow-sm text-dark';
+            aBtn.className = 'btn btn-sm fw-semibold rounded-2 text-muted';
+            submit.className = 'btn btn-emerald w-100 py-2 rounded-3';
+            submit.innerHTML = 'Sign In to Borrower Portal <i class="bi bi-arrow-right ms-1"></i>';
+        }
+    }
+
+    function toggleDemoBox() {
+        document.getElementById('demoBox').classList.toggle('d-none');
+    }
+
+    function fillDemo(email, pass, portal) {
+        switchPortal(portal);
+        document.getElementById('email').value = email;
+        document.getElementById('password').value = pass;
+    }
+
+    (function () {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('portal') === 'admin') switchPortal('admin');
+    })();
+
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const alertBox = document.getElementById('alertBox');
@@ -46,7 +138,7 @@
         });
         const data = await res.json();
         if (!res.ok) {
-            alertBox.innerText = data.message || 'Login failed';
+            alertBox.innerText = data.message || 'Authentication failed';
             alertBox.classList.remove('d-none');
             return;
         }

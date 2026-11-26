@@ -1,33 +1,173 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title th:text="${appName}">SprintLend</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body class="bg-light">
+<head th:replace="~{fragments/styles :: headAssets('SprintLend Capital — Enterprise Digital Lending')}"></head>
+<body>
 <div th:replace="~{fragments/navbar :: navbar}"></div>
 
-<div class="container py-5 text-center">
-    <div class="p-5 bg-white rounded-4 shadow-sm mx-auto" style="max-width: 720px;">
-        <span class="badge bg-primary mb-3">Digital Lending & Loan Management</span>
-        <h1 class="fw-bold mb-3" th:text="${appName}">SprintLend</h1>
-        <p class="text-muted mb-4">
-            Apply for instant personal loans at 12% p.a., get automated EMI schedules upon approval, and track repayments online.
-        </p>
-        <div class="d-flex justify-content-center gap-3 flex-wrap">
-            <a th:href="@{/login}" class="btn btn-primary btn-lg px-4">Login</a>
-            <a th:href="@{/register}" class="btn btn-outline-primary btn-lg px-4">Register as Borrower</a>
-            <a th:href="@{/swagger-ui.html}" class="btn btn-outline-dark btn-lg px-4" target="_blank">Open Swagger UI</a>
-        </div>
-        <hr class="my-4">
-        <div class="text-start small text-muted bg-light p-3 rounded">
-            <strong>Demo Credentials (Seeded Automatically):</strong><br>
-            • Admin: <code>admin@lending.com</code> / <code>admin123</code><br>
-            • Borrower: <code>rahul@demo.com</code> / <code>borrower123</code>
+<!-- Hero Section -->
+<section class="hero-gradient py-5">
+    <div class="container py-4">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6">
+                <span class="badge bg-success bg-opacity-25 text-white border border-success border-opacity-50 px-3 py-2 rounded-pill mb-3">
+                    <i class="bi bi-shield-check me-1"></i> Automated Credit Underwriting & EMI Engine
+                </span>
+                <h1 class="display-5 fw-bold lh-sm mb-3">
+                    Next-Generation Digital Lending for Modern Banking
+                </h1>
+                <p class="text-white-50 fs-5 mb-4">
+                    Instant KYC onboarding, automated FOIR affordability checks, real-time credit officer underwriting, and transparent EMI repayment schedules in one unified platform.
+                </p>
+
+                <div id="guestActions" class="d-flex flex-wrap gap-3 mb-4">
+                    <a th:href="@{/login?portal=borrower}" class="btn btn-emerald btn-lg px-4 rounded-pill">
+                        <i class="bi bi-person-check me-2"></i>Borrower Portal
+                    </a>
+                    <a th:href="@{/login?portal=admin}" class="btn btn-outline-light btn-lg px-4 rounded-pill">
+                        <i class="bi bi-building-lock me-2"></i>Admin Credit Desk
+                    </a>
+                </div>
+                <div id="loggedInActions" class="d-none mb-4">
+                    <a id="continueDashBtn" href="#" class="btn btn-emerald btn-lg px-4 rounded-pill">
+                        <i class="bi bi-arrow-right-circle me-2"></i>Continue to My Dashboard
+                    </a>
+                </div>
+
+                <div class="row g-3 pt-2 text-white-50 small">
+                    <div class="col-4">
+                        <div class="fw-bold text-white fs-5">12.0% p.a.</div>
+                        <div>Fixed Annual Rate</div>
+                    </div>
+                    <div class="col-4">
+                        <div class="fw-bold text-white fs-5">₹50 Lakhs</div>
+                        <div>Max Credit Limit</div>
+                    </div>
+                    <div class="col-4">
+                        <div class="fw-bold text-white fs-5">3 – 60 Mos</div>
+                        <div>Flexible Tenures</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interactive Public EMI Simulator -->
+            <div class="col-lg-6">
+                <div class="bank-card p-4 text-dark shadow-lg">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                            <h5 class="fw-bold mb-0">Instant EMI Estimator</h5>
+                            <small class="text-muted">Calculate your monthly commitment before applying</small>
+                        </div>
+                        <span class="badge bg-success-subtle text-success fw-semibold px-3 py-2 rounded-pill">12% p.a.</span>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <label class="small fw-semibold text-muted">Loan Principal</label>
+                            <span id="heroAmtLabel" class="fw-bold text-dark">₹2,50,000</span>
+                        </div>
+                        <input type="range" id="heroAmt" class="form-range" min="10000" max="5000000" step="10000" value="250000" oninput="calcHeroEmi()">
+                    </div>
+
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between mb-1">
+                            <label class="small fw-semibold text-muted">Repayment Tenure</label>
+                            <span id="heroTenureLabel" class="fw-bold text-dark">24 Months</span>
+                        </div>
+                        <input type="range" id="heroTenure" class="form-range" min="3" max="60" step="1" value="24" oninput="calcHeroEmi()">
+                    </div>
+
+                    <div class="p-3 rounded-4 mb-3" style="background:#F8FAFC; border:1px solid #E2E8F0;">
+                        <div class="row text-center g-2">
+                            <div class="col-4 border-end">
+                                <small class="text-muted d-block">Monthly EMI</small>
+                                <strong id="heroEmiVal" class="text-success fs-5">₹11,768</strong>
+                            </div>
+                            <div class="col-4 border-end">
+                                <small class="text-muted d-block">Total Interest</small>
+                                <strong id="heroIntVal" class="text-dark">₹32,441</strong>
+                            </div>
+                            <div class="col-4">
+                                <small class="text-muted d-block">Total Payable</small>
+                                <strong id="heroTotVal" class="text-dark">₹2,82,441</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <a th:href="@{/register}" class="btn btn-navy w-100 py-2 rounded-3">
+                        Check Eligibility & Apply Now <i class="bi bi-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
-</div>
+</section>
+
+<!-- Enterprise Capabilities -->
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <span class="text-success fw-bold small text-uppercase">Platform Architecture</span>
+            <h2 class="fw-bold mt-1">Built for High-Trust Financial Operations</h2>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="kpi-card h-100">
+                    <div class="kpi-icon bg-success-subtle text-success mb-3"><i class="bi bi-person-vcard"></i></div>
+                    <h5 class="fw-bold">Digital KYC & FOIR Guardrails</h5>
+                    <p class="text-muted small mb-0">PAN verification, income profiling, and automated 50% FOIR affordability underwriting protect borrowers and lenders alike.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="kpi-card h-100">
+                    <div class="kpi-icon bg-primary-subtle text-primary mb-3"><i class="bi bi-calendar2-check"></i></div>
+                    <h5 class="fw-bold">Automated EMI Scheduling</h5>
+                    <p class="text-muted small mb-0">Instant generation of monthly amortization schedules the moment a credit officer approves an application, with auto-closure on final payment.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="kpi-card h-100">
+                    <div class="kpi-icon bg-warning-subtle text-warning mb-3"><i class="bi bi-shield-lock"></i></div>
+                    <h5 class="fw-bold">Bank-Grade JWT & Role Access</h5>
+                    <p class="text-muted small mb-0">Stateless token authentication, BCrypt password hashing, and strict role segregation between Borrower and Admin Credit Desks.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer class="py-4 border-top bg-white text-center text-muted small">
+    <div class="container">
+        © 2026 SprintLend Capital • Enterprise Digital Lending & Loan Management Platform
+    </div>
+</footer>
+
+<script>
+    const fmtINR = n => '₹' + Math.round(n).toLocaleString('en-IN');
+
+    function calcHeroEmi() {
+        const p = Number(document.getElementById('heroAmt').value);
+        const n = Number(document.getElementById('heroTenure').value);
+        const r = 12 / (12 * 100);
+        const emi = (p * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+        const total = emi * n;
+        const interest = total - p;
+
+        document.getElementById('heroAmtLabel').innerText = fmtINR(p);
+        document.getElementById('heroTenureLabel').innerText = `${n} Months`;
+        document.getElementById('heroEmiVal').innerText = fmtINR(emi);
+        document.getElementById('heroIntVal').innerText = fmtINR(interest);
+        document.getElementById('heroTotVal').innerText = fmtINR(total);
+    }
+
+    (function () {
+        calcHeroEmi();
+        const role = localStorage.getItem('role');
+        if (localStorage.getItem('token') && role) {
+            document.getElementById('guestActions').classList.add('d-none');
+            document.getElementById('loggedInActions').classList.remove('d-none');
+            document.getElementById('continueDashBtn').href = role === 'ADMIN' ? '/admin/dashboard' : '/borrower/dashboard';
+        }
+    })();
+</script>
 </body>
 </html>
